@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Ticket {
+    int id;
+    char name[50];
+    int seats;
+};
+
+struct Ticket *tickets = NULL;
+int count = 0;
+
+// Create (Book Ticket)
+void bookTicket() {
+    tickets = (struct Ticket *)realloc(tickets, (count + 1) * sizeof(struct Ticket));
+
+    printf("\nEnter Ticket ID: ");
+    scanf("%d", &tickets[count].id);
+
+    printf("Enter Name: ");
+    scanf(" %[^\n]", tickets[count].name);
+
+    printf("Enter Number of Seats: ");
+    scanf("%d", &tickets[count].seats);
+
+    count++;
+    printf("✅ Ticket Booked Successfully!\n");
+}
+
+// Read (View Tickets)
+void viewTickets() {
+    if (count == 0) {
+        printf("\nNo bookings found!\n");
+        return;
+    }
+
+    printf("\n--- Ticket List ---\n");
+    for (int i = 0; i < count; i++) {
+        printf("\nID: %d", tickets[i].id);
+        printf("\nName: %s", tickets[i].name);
+        printf("\nSeats: %d\n", tickets[i].seats);
+    }
+}
+
+// Update Ticket
+void updateTicket() {
+    int id, found = 0;
+    printf("\nEnter Ticket ID to update: ");
+    scanf("%d", &id);
+
+    for (int i = 0; i < count; i++) {
+        if (tickets[i].id == id) {
+            printf("Enter New Name: ");
+            scanf(" %[^\n]", tickets[i].name);
+
+            printf("Enter New Seats: ");
+            scanf("%d", &tickets[i].seats);
+
+            printf("✅ Ticket Updated Successfully!\n");
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found)
+        printf("❌ Ticket not found!\n");
+}
+
+// Delete Ticket
+void cancelTicket() {
+    int id, found = 0;
+    printf("\nEnter Ticket ID to cancel: ");
+    scanf("%d", &id);
+
+    for (int i = 0; i < count; i++) {
+        if (tickets[i].id == id) {
+            for (int j = i; j < count - 1; j++) {
+                tickets[j] = tickets[j + 1];
+            }
+            count--;
+            tickets = (struct Ticket *)realloc(tickets, count * sizeof(struct Ticket));
+
+            printf("✅ Ticket Cancelled Successfully!\n");
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found)
+        printf("❌ Ticket not found!\n");
+}
+
+// Main Menu
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n===== Ticket Reservation System =====\n");
+        printf("1. Book Ticket\n");
+        printf("2. View Tickets\n");
+        printf("3. Update Ticket\n");
+        printf("4. Cancel Ticket\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                bookTicket();
+                break;
+            case 2:
+                viewTickets();
+                break;
+            case 3:
+                updateTicket();
+                break;
+            case 4:
+                cancelTicket();
+                break;
+            case 5:
+                printf("Exiting...\n");
+                free(tickets);
+                return 0;
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+}
